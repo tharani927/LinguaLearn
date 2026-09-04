@@ -1,0 +1,75 @@
+﻿/* Theme CSS Variables */
+:root, [data-theme="ocean"] {
+  --brand-50: #f0fdfa;
+  --brand-100: #ccfbf1;
+  --brand-200: #99f6e4;
+  --brand-300: #5eead4;
+  --brand-400: #2dd4bf;
+  --brand-500: #0d9488;
+  --brand-600: #0f766e;
+  --brand-700: #115e59;
+  --brand-800: #134e4a;
+  --brand-900: #042f2e;
+  --brand-primary: #0d9488;
+  --brand-hover: #0f766e;
+}
+
+[data-theme="nature"] {
+  --brand-50: #f0fdf4;
+  --brand-100: #dcfce7;
+  --brand-200: #bbf7d0;
+  --brand-300: #86efac;
+  --brand-400: #4ade80;
+  --brand-500: #16a34a;
+  --brand-600: #15803d;
+  --brand-700: #166534;
+  --brand-800: #14532d;
+  --brand-900: #052e16;
+  --brand-primary: #16a34a;
+  --brand-hover: #15803d;
+}
+
+[data-theme="bloom"] {
+  --brand-50: #fdf2f8;
+  --brand-100: #fce7f3;
+  --brand-200: #fbcfe8;
+  --brand-300: #f472b6;
+  --brand-400: #e879f9;
+  --brand-500: #db2777;
+  --brand-600: #be185d;
+  --brand-700: #9d174d;
+  --brand-800: #831843;
+  --brand-900: #500724;
+  --brand-primary: #db2777;
+  --brand-hover: #be185d;
+}
+
+[data-theme="midnight"] {
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-300: #a5b4fc;
+  --brand-400: #818cf8;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --brand-800: #3730a3;
+  --brand-900: #1e1b4b;
+  --brand-primary: #6366f1;
+  --brand-hover: #4f46e5;
+}
+
+[data-theme="sunrise"] {
+  --brand-50: #fffbeb;
+  --brand-100: #fef3c7;
+  --brand-200: #fde68a;
+  --brand-300: #fcd34d;
+  --brand-400: #fbbf24;
+  --brand-500: #ea580c;
+  --brand-600: #c2410c;
+  --brand-700: #9a3412;
+  --brand-800: #7c2d12;
+  --brand-900: #431407;
+  --brand-primary: #ea580c;
+  --brand-hover: #c2410c;
+}

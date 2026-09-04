@@ -1,0 +1,89 @@
+﻿version: '3.8'
+
+services:
+  # Relational Database Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: lingualearn-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: lingualearn_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seeds.sql:/docker-entrypoint-initdb.d/02-seeds.sql
+    networks:
+      - lingualearn-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lingualearn_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Express REST API Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lingualearn-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: lingualearn_db
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/lingualearn_db
+
+      JWT_SECRET: lingualearn_production_jwt_super_secret_key_2026_capstone
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://localhost:80,http://localhost:3000,http://localhost:5173
+      AI_ENGINE_MODE: deterministic_fallback
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lingualearn-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # React Single Page Application Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lingualearn-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - lingualearn-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  lingualearn-network:
+    driver: bridge
