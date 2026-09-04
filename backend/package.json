@@ -13,7 +13,14 @@
     "test:unit": "jest tests/unit --runInBand",
     "test:api": "jest tests/api --runInBand"
   },
-  "keywords": ["education", "adaptive-learning", "ai", "postgresql", "express", "capstone"],
+  "keywords": [
+    "education",
+    "adaptive-learning",
+    "ai",
+    "postgresql",
+    "express",
+    "capstone"
+  ],
   "author": "LinguaLearn Team",
   "license": "ISC",
   "dependencies": {
@@ -29,6 +36,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "jest-junit": "^17.0.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   },
