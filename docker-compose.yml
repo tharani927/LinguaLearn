@@ -4,7 +4,7 @@ services:
   # Relational Database Service
   postgres:
     image: postgres:16-alpine
-    container_name: lingualearn-db
+    container_name: lingualearn-ci-db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -29,7 +29,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: lingualearn-backend
+    container_name: lingualearn-ci-backend
     restart: always
     ports:
       - "5000:5000"
@@ -65,7 +65,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: lingualearn-frontend
+    container_name: lingualearn-ci-frontend
     restart: always
     ports:
       - "80:80"
