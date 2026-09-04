@@ -186,15 +186,6 @@ pipeline {
                 echo "CI Backend Host Port    : ${CI_BACKEND_PORT}"
                 echo "CI Frontend Host Port   : ${CI_FRONTEND_PORT}"
 
-                /*
-                 * Run Docker Compose using dedicated Jenkins ports.
-                 *
-                 * This prevents conflicts with the normal application:
-                 * PostgreSQL : 5433
-                 * Backend    : 5000
-                 * Frontend   : 80
-                 */
-
                 powershell """
                     \$env:POSTGRES_HOST_PORT = "${CI_POSTGRES_PORT}"
                     \$env:BACKEND_HOST_PORT = "${CI_BACKEND_PORT}"
@@ -210,69 +201,49 @@ pipeline {
                     unit: 'SECONDS'
                 )
 
-                /*
-                 * Backend Health Check
-                 */
+                echo "Checking backend health..."
 
-                powershell """
-                    try {
-                        \$response = Invoke-WebRequest `
-                            -Uri "http://localhost:${CI_BACKEND_PORT}/api/health" `
-                            -UseBasicParsing `
-                            -TimeoutSec 15
+                powershell '''
+                    $response = Invoke-WebRequest `
+                        -Uri "http://localhost:15000/api/health" `
+                        -UseBasicParsing `
+                        -TimeoutSec 15
 
-                        if (\$response.StatusCode -ne 200) {
-                            throw "Backend health check returned HTTP \$(`$response.StatusCode)"
-                        }
-
-                        Write-Host "=========================================="
-                        Write-Host " BACKEND HEALTH CHECK PASSED "
-                        Write-Host " http://localhost:${CI_BACKEND_PORT}/api/health "
-                        Write-Host "=========================================="
-                    }
-                    catch {
-                        Write-Host "=========================================="
-                        Write-Host " BACKEND HEALTH CHECK FAILED "
-                        Write-Host "=========================================="
-
+                    if ($response.StatusCode -ne 200) {
+                        Write-Host "Backend health check FAILED"
+                        Write-Host "HTTP Status: $($response.StatusCode)"
                         docker compose -f docker-compose.yml ps
                         docker compose -f docker-compose.yml logs
-
                         exit 1
                     }
-                """
 
-                /*
-                 * Frontend Health Check
-                 */
+                    Write-Host "=========================================="
+                    Write-Host " BACKEND HEALTH CHECK PASSED "
+                    Write-Host " http://localhost:15000/api/health "
+                    Write-Host "=========================================="
+                '''
 
-                powershell """
-                    try {
-                        \$response = Invoke-WebRequest `
-                            -Uri "http://localhost:${CI_FRONTEND_PORT}/" `
-                            -UseBasicParsing `
-                            -TimeoutSec 15
+                echo "Checking frontend health..."
 
-                        if (\$response.StatusCode -ne 200) {
-                            throw "Frontend health check returned HTTP \$(`$response.StatusCode)"
-                        }
+                powershell '''
+                    $response = Invoke-WebRequest `
+                        -Uri "http://localhost:18080/" `
+                        -UseBasicParsing `
+                        -TimeoutSec 15
 
-                        Write-Host "=========================================="
-                        Write-Host " FRONTEND HEALTH CHECK PASSED "
-                        Write-Host " http://localhost:${CI_FRONTEND_PORT}/ "
-                        Write-Host "=========================================="
-                    }
-                    catch {
-                        Write-Host "=========================================="
-                        Write-Host " FRONTEND HEALTH CHECK FAILED "
-                        Write-Host "=========================================="
-
+                    if ($response.StatusCode -ne 200) {
+                        Write-Host "Frontend health check FAILED"
+                        Write-Host "HTTP Status: $($response.StatusCode)"
                         docker compose -f docker-compose.yml ps
                         docker compose -f docker-compose.yml logs
-
                         exit 1
                     }
-                """
+
+                    Write-Host "=========================================="
+                    Write-Host " FRONTEND HEALTH CHECK PASSED "
+                    Write-Host " http://localhost:18080/ "
+                    Write-Host "=========================================="
+                '''
 
                 echo "=========================================="
                 echo " SMOKE TESTS PASSED SUCCESSFULLY "
